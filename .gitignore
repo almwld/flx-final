@@ -19,3 +19,6 @@ android/app/release/
 *.iml
 # Project files
 full_project_*.txt
+full_project_*.txt
+build/
+.dart_tool/
