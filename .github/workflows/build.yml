@@ -23,8 +23,6 @@ jobs:
           cp -r assets /tmp/user_code/ 2>/dev/null || true
           cp pubspec.yaml /tmp/user_code/ 2>/dev/null || true
           cp -r .github /tmp/user_code/ 2>/dev/null || true
-          cp README.md /tmp/user_code/ 2>/dev/null || true
-          cp codemagic.yaml /tmp/user_code/ 2>/dev/null || true
           echo "User code saved"
 
       - name: Create fresh Flutter project
@@ -45,17 +43,23 @@ jobs:
           cp /tmp/user_code/pubspec.yaml . 2>/dev/null || true
           echo "User code restored"
 
-      - name: Fix pubspec.yaml
+      - name: Update Gradle wrapper to 8.0
         run: |
-          # تحديث إصدارات الحزم المتوافقة
-          sed -i 's/path_provider: .*/path_provider: ^2.0.0/g' pubspec.yaml
-          sed -i 's/flutter_local_notifications: .*/flutter_local_notifications: ^17.0.0/g' pubspec.yaml
-          sed -i 's/supabase_flutter: .*/supabase_flutter: ^2.0.0/g' pubspec.yaml
-          sed -i 's/url_launcher: .*/url_launcher: ^6.0.0/g' pubspec.yaml
-          echo "pubspec.yaml updated"
+          cd android
+          # تحديث gradle-wrapper.properties
+          cat > gradle/wrapper/gradle-wrapper.properties << 'GRADLE'
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-all.zip
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          GRADLE
+          cd $GITHUB_WORKSPACE
+          echo "Gradle wrapper updated to 8.0"
 
-      - name: Fix build.gradle with modern approach
+      - name: Fix build.gradle files
         run: |
+          # Update settings.gradle
           cat > android/settings.gradle << 'SETTINGS'
           pluginManagement {
               def flutterSdkPath = {
@@ -81,6 +85,7 @@ jobs:
           include ":app"
           SETTINGS
 
+          # Update build.gradle
           cat > android/build.gradle << 'BUILD'
           allprojects {
               repositories {
@@ -100,6 +105,7 @@ jobs:
           }
           BUILD
 
+          # Update app/build.gradle
           cat > android/app/build.gradle << 'APP'
           plugins {
               id "com.android.application"
@@ -167,6 +173,15 @@ jobs:
               coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
           }
           APP
+
+      - name: Fix pubspec.yaml versions
+        run: |
+          # تحديث إصدارات الحزم
+          sed -i 's/path_provider: .*/path_provider: ^2.0.0/g' pubspec.yaml
+          sed -i 's/flutter_local_notifications: .*/flutter_local_notifications: ^17.0.0/g' pubspec.yaml
+          sed -i 's/supabase_flutter: .*/supabase_flutter: ^2.0.0/g' pubspec.yaml
+          sed -i 's/url_launcher: .*/url_launcher: ^6.0.0/g' pubspec.yaml
+          echo "pubspec.yaml updated"
 
       - name: Update AndroidManifest.xml
         run: |
