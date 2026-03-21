@@ -3,18 +3,54 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static const Color primaryColor = Color(0xFF4CAF50);
   static const Color secondaryColor = Color(0xFFFF9800);
+  static const Color goldColor = Color(0xFFFFD700);
+  static const Color goldLight = Color(0xFFFFF0B5);
+  static const Color error = Color(0xFFE53935);
+  static const Color success = Color(0xFF4CAF50);
   
   // Light theme colors
   static const Color lightBackground = Color(0xFFF5F5F5);
-  static const Color lightCard = Colors.white;
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightText = Color(0xFF212121);
   static const Color lightSecondaryText = Color(0xFF757575);
+  static const Color lightDivider = Color(0xFFE0E0E0);
   
   // Dark theme colors
   static const Color darkBackground = Color(0xFF121212);
-  static const Color darkCard = Color(0xFF1E1E1E);
-  static const Color darkText = Colors.white;
+  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkCard = Color(0xFF2C2C2C);
+  static const Color darkText = Color(0xFFFFFFFF);
   static const Color darkSecondaryText = Color(0xFFB0B0B0);
+  static const Color darkDivider = Color(0xFF3C3C3C);
+  
+  // Gradients
+  static const LinearGradient goldGradient = LinearGradient(
+    colors: [Color(0xFFFFD700), Color(0xFFFFB347)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  
+  // Helper methods
+  static Color getTextColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? darkText : lightText;
+  }
+  
+  static Color getBackgroundColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? darkBackground : lightBackground;
+  }
+  
+  static Color getCardColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? darkCard : lightCard;
+  }
+  
+  static Color getSecondaryTextColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? darkSecondaryText : lightSecondaryText;
+  }
+  
+  static Color getDividerColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? darkDivider : lightDivider;
+  }
   
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
@@ -23,6 +59,8 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
+      surface: lightSurface,
+      error: error,
     ),
     appBarTheme: const AppBarTheme(
       elevation: 0,
@@ -30,13 +68,14 @@ class AppTheme {
       backgroundColor: Colors.transparent,
       foregroundColor: lightText,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       color: lightCard,
     ),
+    dividerColor: lightDivider,
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontSize: 24,
@@ -56,6 +95,11 @@ class AppTheme {
         fontSize: 14,
         color: lightSecondaryText,
       ),
+      labelLarge: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: lightText,
+      ),
     ),
   );
   
@@ -66,6 +110,8 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
       secondary: secondaryColor,
+      surface: darkSurface,
+      error: error,
     ),
     appBarTheme: const AppBarTheme(
       elevation: 0,
@@ -73,13 +119,14 @@ class AppTheme {
       backgroundColor: Colors.transparent,
       foregroundColor: darkText,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       color: darkCard,
     ),
+    dividerColor: darkDivider,
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontSize: 24,
@@ -98,6 +145,11 @@ class AppTheme {
       bodyMedium: TextStyle(
         fontSize: 14,
         color: darkSecondaryText,
+      ),
+      labelLarge: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: darkText,
       ),
     ),
   );
