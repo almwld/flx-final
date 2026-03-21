@@ -19,17 +19,23 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.0'
+        channel: 'stable'
     
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Get dependencies
+      run: flutter pub get
     
-    - name: Run tests
-      run: ./gradlew test
+    - name: Analyze project
+      run: flutter analyze
     
-    - name: Upload build artifacts
+    - name: Build APK
+      run: flutter build apk --release
+    
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug
-        path: app/build/outputs/apk/debug/
+        name: app-release
+        path: build/app/outputs/flutter-apk/app-release.apk
