@@ -13,7 +13,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.22.0'
           channel: 'stable'
 
       - name: Save user code
@@ -27,7 +27,7 @@ jobs:
           cp codemagic.yaml /tmp/user_code/ 2>/dev/null || true
           echo "User code saved"
 
-      - name: Create fresh Flutter project with older version
+      - name: Create fresh Flutter project
         run: |
           cd /tmp
           rm -rf /tmp/fresh_project
@@ -45,20 +45,74 @@ jobs:
           cp /tmp/user_code/pubspec.yaml . 2>/dev/null || true
           echo "User code restored"
 
-      - name: Fix build.gradle for desugaring
+      - name: Fix pubspec.yaml
         run: |
-          cat > android/app/build.gradle << 'GRADLE'
+          # تحديث إصدارات الحزم المتوافقة
+          sed -i 's/path_provider: .*/path_provider: ^2.0.0/g' pubspec.yaml
+          sed -i 's/flutter_local_notifications: .*/flutter_local_notifications: ^17.0.0/g' pubspec.yaml
+          sed -i 's/supabase_flutter: .*/supabase_flutter: ^2.0.0/g' pubspec.yaml
+          sed -i 's/url_launcher: .*/url_launcher: ^6.0.0/g' pubspec.yaml
+          echo "pubspec.yaml updated"
+
+      - name: Fix build.gradle with modern approach
+        run: |
+          cat > android/settings.gradle << 'SETTINGS'
+          pluginManagement {
+              def flutterSdkPath = {
+                  def properties = new Properties()
+                  file("local.properties").withInputStream { properties.load(it) }
+                  def flutterSdkPath = properties.getProperty("flutter.sdk")
+                  assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+                  return flutterSdkPath
+              }
+              settings.ext.flutterSdkPath = flutterSdkPath()
+              includeBuild("${settings.ext.flutterSdkPath}/packages/flutter_tools/gradle")
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          plugins {
+              id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+              id "com.android.application" version "8.1.0" apply false
+              id "org.jetbrains.kotlin.android" version "1.9.0" apply false
+          }
+          include ":app"
+          SETTINGS
+
+          cat > android/build.gradle << 'BUILD'
+          allprojects {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.buildDir = '../build'
+          subprojects {
+              project.buildDir = "${rootProject.buildDir}/${project.name}"
+          }
+          subprojects {
+              project.evaluationDependsOn(':app')
+          }
+          tasks.register("clean", Delete) {
+              delete rootProject.buildDir
+          }
+          BUILD
+
+          cat > android/app/build.gradle << 'APP'
+          plugins {
+              id "com.android.application"
+              id "kotlin-android"
+              id "dev.flutter.flutter-gradle-plugin"
+          }
+
           def localProperties = new Properties()
           def localPropertiesFile = rootProject.file('local.properties')
           if (localPropertiesFile.exists()) {
               localPropertiesFile.withReader('UTF-8') { reader ->
                   localProperties.load(reader)
               }
-          }
-
-          def flutterRoot = localProperties.getProperty('flutter.sdk')
-          if (flutterRoot == null) {
-              throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
           }
 
           def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -71,12 +125,8 @@ jobs:
               flutterVersionName = '1.0'
           }
 
-          apply plugin: 'com.android.application'
-          apply plugin: 'kotlin-android'
-          apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
           android {
-              compileSdkVersion 34
+              compileSdk 34
               ndkVersion flutter.ndkVersion
 
               compileOptions {
@@ -95,8 +145,8 @@ jobs:
 
               defaultConfig {
                   applicationId "com.flexyemen.flex_yemen"
-                  minSdkVersion 21
-                  targetSdkVersion 34
+                  minSdk 21
+                  targetSdk 34
                   versionCode flutterVersionCode.toInteger()
                   versionName flutterVersionName
                   multiDexEnabled true
@@ -114,19 +164,19 @@ jobs:
           }
 
           dependencies {
-              implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
               coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
           }
-          GRADLE
+          APP
 
       - name: Update AndroidManifest.xml
         run: |
           sed -i 's/android:label="flex_yemen"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
+          sed -i 's/package="com.example.flex_yemen"/package="com.flexyemen.flex_yemen"/g' android/app/src/main/AndroidManifest.xml
 
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build APK (split-per-abi)
+      - name: Build APK
         run: flutter build apk --release --split-per-abi
 
       - name: Upload APKs
