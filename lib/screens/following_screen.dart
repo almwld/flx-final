@@ -8,14 +8,19 @@ class FollowingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-        appBar: SimpleAppBar(
-          title: 'المتابعين',
+        appBar: AppBar(
+          title: const Text('المتابعين'),
+          centerTitle: true,
           bottom: const TabBar(
-            tabs: [Tab(text: 'المتابعين'), Tab(text: 'المتابَعين')],
+            tabs: [
+              Tab(text: 'المتابعين'),
+              Tab(text: 'المتابَعين'),
+            ],
             labelStyle: TextStyle(fontFamily: 'Changa'),
           ),
         ),
@@ -27,9 +32,28 @@ class FollowingScreen extends StatelessWidget {
               itemBuilder: (context, index) => Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
-                  leading: const CircleAvatar(backgroundColor: AppTheme.goldColor, child: Icon(Icons.person, color: Colors.white)),
-                  title: Text('متابع ${index + 1}', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                  trailing: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: AppTheme.goldColor, foregroundColor: AppTheme.darkText), child: const Text('متابعة', style: TextStyle(fontFamily: 'Changa'))),
+                  leading: const CircleAvatar(
+                    backgroundColor: AppTheme.goldColor,
+                    child: Icon(Icons.person, color: Colors.white),
+                  ),
+                  title: Text(
+                    'متابع ${index + 1}',
+                    style: TextStyle(
+                      fontFamily: 'Changa',
+                      color: AppTheme.getTextColor(context),
+                    ),
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.goldColor,
+                      foregroundColor: AppTheme.darkTextLight,
+                    ),
+                    child: const Text(
+                      'متابعة',
+                      style: TextStyle(fontFamily: 'Changa'),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -39,9 +63,28 @@ class FollowingScreen extends StatelessWidget {
               itemBuilder: (context, index) => Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
-                  leading: const CircleAvatar(backgroundColor: AppTheme.goldColor, child: Icon(Icons.person, color: Colors.white)),
-                  title: Text('متابَع ${index + 1}', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                  trailing: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error, foregroundColor: Colors.white), child: const Text('إلغاء', style: TextStyle(fontFamily: 'Changa'))),
+                  leading: const CircleAvatar(
+                    backgroundColor: AppTheme.goldColor,
+                    child: Icon(Icons.person, color: Colors.white),
+                  ),
+                  title: Text(
+                    'متابَع ${index + 1}',
+                    style: TextStyle(
+                      fontFamily: 'Changa',
+                      color: AppTheme.getTextColor(context),
+                    ),
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.error,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text(
+                      'إلغاء',
+                      style: TextStyle(fontFamily: 'Changa'),
+                    ),
+                  ),
                 ),
               ),
             ),
