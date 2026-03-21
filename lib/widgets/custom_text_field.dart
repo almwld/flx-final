@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
-/// حقل نصي مخصص موحد
 class CustomTextField extends StatelessWidget {
   final String? label;
   final String? hint;
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final bool obscureText;
-  final bool readOnly;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-  final void Function()? onTap;
   final int maxLines;
   final int? maxLength;
-  final bool autofocus;
-  final FocusNode? focusNode;
-  final TextInputAction? textInputAction;
-  final void Function(String)? onSubmitted;
 
   const CustomTextField({
     super.key,
@@ -28,18 +20,11 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
-    this.readOnly = false,
     this.prefixIcon,
     this.suffixIcon,
     this.validator,
-    this.onChanged,
-    this.onTap,
     this.maxLines = 1,
     this.maxLength,
-    this.autofocus = false,
-    this.focusNode,
-    this.textInputAction,
-    this.onSubmitted,
   });
 
   @override
@@ -48,145 +33,33 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      readOnly: readOnly,
       validator: validator,
-      onChanged: onChanged,
-      onTap: onTap,
       maxLines: maxLines,
       maxLength: maxLength,
-      autofocus: autofocus,
-      focusNode: focusNode,
-      textInputAction: textInputAction,
-      onFieldSubmitted: onSubmitted,
       textAlign: TextAlign.right,
       textDirection: TextDirection.rtl,
-      style: const TextStyle(
-        fontFamily: 'Changa',
-      ),
+      style: const TextStyle(fontFamily: 'Changa'),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        alignLabelWithHint: true,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 }
 
-/// حقل نصي للبحث
-class SearchTextField extends StatelessWidget {
-  final TextEditingController? controller;
-  final void Function(String)? onChanged;
-  final void Function()? onClear;
-  final String? hint;
-  final VoidCallback? onSubmitted;
-
-  const SearchTextField({
-    super.key,
-    this.controller,
-    this.onChanged,
-    this.onClear,
-    this.hint,
-    this.onSubmitted,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : AppTheme.lightCard,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? AppTheme.darkDivider : AppTheme.lightDivider,
-        ),
-      ),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        textAlign: TextAlign.right,
-        textDirection: TextDirection.rtl,
-        style: const TextStyle(fontFamily: 'Changa'),
-        decoration: InputDecoration(
-          hintText: hint ?? 'بحث...',
-          prefixIcon: const Icon(Icons.search, color: AppTheme.goldColor),
-          suffixIcon: controller?.text.isNotEmpty == true
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    controller?.clear();
-                    onClear?.call();
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        ),
-        onSubmitted: (_) => onSubmitted?.call(),
-      ),
-    );
-  }
-}
-
-/// حقل نصي للرقم الهاتف
-class PhoneTextField extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-
-  const PhoneTextField({
-    super.key,
-    this.controller,
-    this.validator,
-    this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomTextField(
-      label: 'رقم الهاتف',
-      hint: 'مثال: 771234567',
-      controller: controller,
-      keyboardType: TextInputType.phone,
-      prefixIcon: Container(
-        margin: const EdgeInsets.all(12),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: AppTheme.goldColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: const Text(
-          '+967',
-          style: TextStyle(
-            fontFamily: 'Changa',
-            color: AppTheme.goldColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      validator: validator,
-      onChanged: onChanged,
-    );
-  }
-}
-
-/// حقل كلمة المرور
 class PasswordTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String? label;
-  final String? hint;
   final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
 
   const PasswordTextField({
     super.key,
     this.controller,
     this.label,
-    this.hint,
     this.validator,
-    this.onChanged,
   });
 
   @override
@@ -200,106 +73,43 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   Widget build(BuildContext context) {
     return CustomTextField(
       label: widget.label ?? 'كلمة المرور',
-      hint: widget.hint ?? 'أدخل كلمة المرور',
+      hint: 'أدخل كلمة المرور',
       controller: widget.controller,
-      keyboardType: TextInputType.visiblePassword,
       obscureText: _obscureText,
       prefixIcon: const Icon(Icons.lock_outline),
       suffixIcon: IconButton(
-        icon: Icon(
-          _obscureText ? Icons.visibility_off : Icons.visibility,
-          color: AppTheme.goldColor,
-        ),
-        onPressed: () {
-          setState(() {
-            _obscureText = !_obscureText;
-          });
-        },
+        icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: AppTheme.goldColor),
+        onPressed: () => setState(() => _obscureText = !_obscureText),
       ),
       validator: widget.validator,
-      onChanged: widget.onChanged,
     );
   }
 }
 
-/// حقل نصي للوصف متعدد الأسطر
-class DescriptionTextField extends StatelessWidget {
+class PhoneTextField extends StatelessWidget {
   final TextEditingController? controller;
-  final String? label;
-  final String? hint;
   final String? Function(String?)? validator;
-  final int maxLines;
-  final int? maxLength;
 
-  const DescriptionTextField({
+  const PhoneTextField({
     super.key,
     this.controller,
-    this.label,
-    this.hint,
     this.validator,
-    this.maxLines = 4,
-    this.maxLength,
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomTextField(
-      label: label ?? 'الوصف',
-      hint: hint ?? 'أدخل الوصف هنا...',
+      label: 'رقم الهاتف',
+      hint: 'مثال: 771234567',
       controller: controller,
-      maxLines: maxLines,
-      maxLength: maxLength,
-      validator: validator,
-    );
-  }
-}
-
-/// حقل نصي للسعر
-class PriceTextField extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-  final String currency;
-
-  const PriceTextField({
-    super.key,
-    this.controller,
-    this.validator,
-    this.onChanged,
-    this.currency = 'YER',
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final currencySymbol = {
-      'YER': 'ر.ي',
-      'SAR': 'ر.س',
-      'USD': '\$',
-    }[currency] ?? currency;
-
-    return CustomTextField(
-      label: 'السعر',
-      hint: '0.00',
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      keyboardType: TextInputType.phone,
       prefixIcon: Container(
         margin: const EdgeInsets.all(12),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: AppTheme.goldColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          currencySymbol,
-          style: const TextStyle(
-            fontFamily: 'Changa',
-            color: AppTheme.goldColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        decoration: BoxDecoration(color: AppTheme.goldColor.withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
+        child: const Text('+967', style: TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor, fontWeight: FontWeight.w600)),
       ),
       validator: validator,
-      onChanged: onChanged,
     );
   }
 }

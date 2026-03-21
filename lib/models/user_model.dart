@@ -1,11 +1,10 @@
-/// نموذج المستخدم
 class UserModel {
   final String id;
   final String fullName;
   final String email;
   final String phone;
   final String? avatarUrl;
-  final String userType; // 'customer' أو 'merchant'
+  final String userType;
   final String? city;
   final double rating;
   final int followers;
@@ -40,57 +39,8 @@ class UserModel {
       rating: (json['rating'] ?? 0.0).toDouble(),
       followers: json['followers'] ?? 0,
       following: json['following'] ?? 0,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : DateTime.now(),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
       isVerified: json['is_verified'] ?? false,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'full_name': fullName,
-      'email': email,
-      'phone': phone,
-      'avatar_url': avatarUrl,
-      'user_type': userType,
-      'city': city,
-      'rating': rating,
-      'followers': followers,
-      'following': following,
-      'created_at': createdAt.toIso8601String(),
-      'is_verified': isVerified,
-    };
-  }
-
-  UserModel copyWith({
-    String? id,
-    String? fullName,
-    String? email,
-    String? phone,
-    String? avatarUrl,
-    String? userType,
-    String? city,
-    double? rating,
-    int? followers,
-    int? following,
-    DateTime? createdAt,
-    bool? isVerified,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      fullName: fullName ?? this.fullName,
-      email: email ?? this.email,
-      phone: phone ?? this.phone,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
-      userType: userType ?? this.userType,
-      city: city ?? this.city,
-      rating: rating ?? this.rating,
-      followers: followers ?? this.followers,
-      following: following ?? this.following,
-      createdAt: createdAt ?? this.createdAt,
-      isVerified: isVerified ?? this.isVerified,
     );
   }
 }
