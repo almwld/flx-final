@@ -15,139 +15,58 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Save user code
+        run: |
+          # حفظ الكود الخاص بالمستخدم
+          mkdir -p /tmp/user_code
+          cp -r lib /tmp/user_code/
+          cp -r assets /tmp/user_code/ 2>/dev/null || true
+          cp pubspec.yaml /tmp/user_code/
+          cp -r .github /tmp/user_code/ 2>/dev/null || true
+          cp README.md /tmp/user_code/ 2>/dev/null || true
+          cp codemagic.yaml /tmp/user_code/ 2>/dev/null || true
+
+      - name: Delete old Flutter project files
+        run: |
+          # حذف كل شيء باستثناء مجلد .git
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' ! -name '.github' -exec rm -rf {} \; 2>/dev/null || true
+
       - name: Create fresh Flutter project
         run: |
-          mkdir -p /tmp/fresh
-          cd /tmp/fresh
-          flutter create --org com.flexyemen --project-name fresh_project .
-          cd $GITHUB_WORKSPACE
-          cp -r lib /tmp/fresh/
-          cp -r assets /tmp/fresh/ 2>/dev/null || true
-          cp pubspec.yaml /tmp/fresh/
-          rm -rf lib assets pubspec.yaml android ios
-          cp -r /tmp/fresh/. .
-          rm -rf /tmp/fresh
+          # إنشاء مشروع Flutter جديد
+          flutter create --org com.flexyemen --project-name flex_yemen .
 
-      - name: Fix build.gradle files
+      - name: Restore user code
         run: |
-          # Update settings.gradle
-          cat > android/settings.gradle << 'SETTINGS'
-          pluginManagement {
-              def flutterSdkPath = {
-                  def properties = new Properties()
-                  file("local.properties").withInputStream { properties.load(it) }
-                  def flutterSdkPath = properties.getProperty("flutter.sdk")
-                  assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
-                  return flutterSdkPath
-              }
-              settings.ext.flutterSdkPath = flutterSdkPath()
-              includeBuild("${settings.ext.flutterSdkPath}/packages/flutter_tools/gradle")
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          plugins {
-              id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-              id "com.android.application" version "7.3.0" apply false
-              id "org.jetbrains.kotlin.android" version "1.9.0" apply false
-          }
-          include ":app"
-          SETTINGS
+          # استعادة كود المستخدم
+          cp -r /tmp/user_code/lib/* lib/ 2>/dev/null || true
+          cp -r /tmp/user_code/assets/* assets/ 2>/dev/null || true
+          cp /tmp/user_code/pubspec.yaml . 2>/dev/null || true
+          cp -r /tmp/user_code/.github . 2>/dev/null || true
+          cp /tmp/user_code/README.md . 2>/dev/null || true
+          cp /tmp/user_code/codemagic.yaml . 2>/dev/null || true
 
-          # Update build.gradle
-          cat > android/build.gradle << 'BUILD'
-          allprojects {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
-          rootProject.buildDir = '../build'
-          subprojects {
-              project.buildDir = "${rootProject.buildDir}/${project.name}"
-          }
-          subprojects {
-              project.evaluationDependsOn(':app')
-          }
-          tasks.register("clean", Delete) {
-              delete rootProject.buildDir
-          }
-          BUILD
-
-          # Update app/build.gradle
-          cat > android/app/build.gradle << 'APP'
-          plugins {
-              id "com.android.application"
-              id "kotlin-android"
-              id "dev.flutter.flutter-gradle-plugin"
-          }
-
-          def localProperties = new Properties()
-          def localPropertiesFile = rootProject.file('local.properties')
-          if (localPropertiesFile.exists()) {
-              localPropertiesFile.withReader('UTF-8') { reader ->
-                  localProperties.load(reader)
-              }
-          }
-
-          def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-          if (flutterVersionCode == null) {
-              flutterVersionCode = '1'
-          }
-
-          def flutterVersionName = localProperties.getProperty('flutter.versionName')
-          if (flutterVersionName == null) {
-              flutterVersionName = '1.0'
-          }
-
-          android {
-              compileSdk 34
-              ndkVersion flutter.ndkVersion
-
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_1_8
-                  targetCompatibility JavaVersion.VERSION_1_8
-                  coreLibraryDesugaringEnabled true
-              }
-
-              kotlinOptions {
-                  jvmTarget = '1.8'
-              }
-
-              sourceSets {
-                  main.java.srcDirs += 'src/main/kotlin'
-              }
-
-              defaultConfig {
-                  applicationId "com.flexyemen.flex_yemen"
-                  minSdk 21
-                  targetSdk 34
-                  versionCode flutterVersionCode.toInteger()
-                  versionName flutterVersionName
-                  multiDexEnabled true
-              }
-
-              buildTypes {
-                  release {
-                      signingConfig signingConfigs.debug
-                  }
-              }
-          }
-
-          flutter {
-              source '../..'
-          }
-
-          dependencies {
-              coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
-          }
-          APP
-
-      - name: Set app name
+      - name: Enable desugaring in build.gradle
         run: |
-          sed -i 's/android:label="fresh_project"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
+          # تمكين desugaring في ملف build.gradle
+          sed -i '/compileOptions {/a \                coreLibraryDesugaringEnabled true' android/app/build.gradle
+          
+          # إضافة dependency desugar_jdk_libs
+          sed -i '/dependencies {/a \    coreLibraryDesugaring '\''com.android.tools:desugar_jdk_libs:2.0.4'\''' android/app/build.gradle
+          
+          # إضافة multiDexEnabled
+          sed -i '/defaultConfig {/a \                multiDexEnabled true' android/app/build.gradle
+          
+          # تحديث minSdk إلى 21
+          sed -i 's/minSdk [0-9]*/minSdk 21/g' android/app/build.gradle
+
+      - name: Set app name and package
+        run: |
+          # تغيير اسم التطبيق
+          sed -i 's/android:label="flex_yemen"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
+          
+          # تحديث package name
+          sed -i 's/package="com.example.flex_yemen"/package="com.flexyemen.flex_yemen"/g' android/app/src/main/AndroidManifest.xml
 
       - name: Get dependencies
         run: flutter pub get
