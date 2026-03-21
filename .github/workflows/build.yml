@@ -19,22 +19,24 @@ jobs:
         run: |
           # حفظ الكود الخاص بالمستخدم
           mkdir -p /tmp/user_code
-          cp -r lib /tmp/user_code/
+          cp -r lib /tmp/user_code/ 2>/dev/null || true
           cp -r assets /tmp/user_code/ 2>/dev/null || true
-          cp pubspec.yaml /tmp/user_code/
+          cp pubspec.yaml /tmp/user_code/ 2>/dev/null || true
           cp -r .github /tmp/user_code/ 2>/dev/null || true
           cp README.md /tmp/user_code/ 2>/dev/null || true
           cp codemagic.yaml /tmp/user_code/ 2>/dev/null || true
-
-      - name: Delete old Flutter project files
-        run: |
-          # حذف كل شيء باستثناء مجلد .git
-          find . -mindepth 1 -maxdepth 1 ! -name '.git' ! -name '.github' -exec rm -rf {} \; 2>/dev/null || true
+          echo "User code saved"
 
       - name: Create fresh Flutter project
         run: |
           # إنشاء مشروع Flutter جديد
-          flutter create --org com.flexyemen --project-name flex_yemen .
+          cd /tmp
+          rm -rf /tmp/fresh_project
+          flutter create --org com.flexyemen --project-name flex_yemen fresh_project
+          cd $GITHUB_WORKSPACE
+          # نسخ المشروع الجديد إلى المجلد الحالي
+          cp -r /tmp/fresh_project/. .
+          echo "Fresh project created"
 
       - name: Restore user code
         run: |
@@ -45,20 +47,27 @@ jobs:
           cp -r /tmp/user_code/.github . 2>/dev/null || true
           cp /tmp/user_code/README.md . 2>/dev/null || true
           cp /tmp/user_code/codemagic.yaml . 2>/dev/null || true
+          echo "User code restored"
 
       - name: Enable desugaring in build.gradle
         run: |
           # تمكين desugaring في ملف build.gradle
-          sed -i '/compileOptions {/a \                coreLibraryDesugaringEnabled true' android/app/build.gradle
+          cd android/app
+          
+          # إضافة coreLibraryDesugaringEnabled
+          sed -i '/compileOptions {/a \                coreLibraryDesugaringEnabled true' build.gradle
           
           # إضافة dependency desugar_jdk_libs
-          sed -i '/dependencies {/a \    coreLibraryDesugaring '\''com.android.tools:desugar_jdk_libs:2.0.4'\''' android/app/build.gradle
+          sed -i '/dependencies {/a \    coreLibraryDesugaring '\''com.android.tools:desugar_jdk_libs:2.0.4'\''' build.gradle
           
           # إضافة multiDexEnabled
-          sed -i '/defaultConfig {/a \                multiDexEnabled true' android/app/build.gradle
+          sed -i '/defaultConfig {/a \                multiDexEnabled true' build.gradle
           
           # تحديث minSdk إلى 21
-          sed -i 's/minSdk [0-9]*/minSdk 21/g' android/app/build.gradle
+          sed -i 's/minSdk [0-9]*/minSdk 21/g' build.gradle
+          
+          cd $GITHUB_WORKSPACE
+          echo "Desugaring enabled"
 
       - name: Set app name and package
         run: |
@@ -67,12 +76,18 @@ jobs:
           
           # تحديث package name
           sed -i 's/package="com.example.flex_yemen"/package="com.flexyemen.flex_yemen"/g' android/app/src/main/AndroidManifest.xml
+          
+          echo "App name updated"
 
       - name: Get dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          echo "Dependencies installed"
 
       - name: Build APK (split-per-abi)
-        run: flutter build apk --release --split-per-abi
+        run: |
+          flutter build apk --release --split-per-abi
+          echo "APK built successfully"
 
       - name: Upload APKs
         uses: actions/upload-artifact@v4
