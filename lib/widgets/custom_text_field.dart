@@ -274,7 +274,7 @@ class PriceTextField extends StatelessWidget {
     final currencySymbol = {
       'YER': 'ر.ي',
       'SAR': 'ر.س',
-      'USD': '$',
+      'USD': '\$',
     }[currency] ?? currency;
 
     return CustomTextField(

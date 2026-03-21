@@ -135,7 +135,7 @@ class ProductModel {
     final currencySymbol = {
       'YER': 'ر.ي',
       'SAR': 'ر.س',
-      'USD': '$',
+      'USD': '\$',
     }[currency] ?? currency;
     return '$price $currencySymbol';
   }

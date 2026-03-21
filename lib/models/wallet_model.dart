@@ -64,7 +64,7 @@ class WalletModel {
     final symbol = {
       'YER': 'ر.ي',
       'SAR': 'ر.س',
-      'USD': '$',
+      'USD': '\$',
     }[currency] ?? currency;
     return '${balance.toStringAsFixed(0)} $symbol';
   }

@@ -18,7 +18,7 @@ class _WalletScreenState extends State<WalletScreen> {
   final List<Map<String, dynamic>> _balances = [
     {'currency': 'YER', 'amount': 125000.0, 'symbol': 'ر.ي', 'name': 'ريال يمني'},
     {'currency': 'SAR', 'amount': 2500.0, 'symbol': 'ر.س', 'name': 'ريال سعودي'},
-    {'currency': 'USD', 'amount': 500.0, 'symbol': '$', 'name': 'دولار أمريكي'},
+    {'currency': 'USD', 'amount': 500.0, 'symbol': '\$', 'name': 'دولار أمريكي'},
   ];
 
   // خدمات المحفظة
