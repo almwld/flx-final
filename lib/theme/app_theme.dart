@@ -7,20 +7,24 @@ class AppTheme {
   static const Color goldLight = Color(0xFFFFF0B5);
   static const Color error = Color(0xFFE53935);
   static const Color success = Color(0xFF4CAF50);
+  static const Color info = Color(0xFF2196F3);
+  static const Color warning = Color(0xFFFFC107);
   
   // Light theme colors
   static const Color lightBackground = Color(0xFFF5F5F5);
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightCard = Color(0xFFFFFFFF);
   static const Color lightText = Color(0xFF212121);
-  static const Color lightSecondaryText = Color(0xFF757575);
+  static const Color lightTextSecondary = Color(0xFF757575);
+  static const Color darkTextSecondary = Color(0xFFB0B0B0);
   static const Color lightDivider = Color(0xFFE0E0E0);
+  static const Color darkText = Color(0xFF212121);
   
   // Dark theme colors
   static const Color darkBackground = Color(0xFF121212);
   static const Color darkSurface = Color(0xFF1E1E1E);
   static const Color darkCard = Color(0xFF2C2C2C);
-  static const Color darkText = Color(0xFFFFFFFF);
+  static const Color darkTextLight = Color(0xFFFFFFFF);
   static const Color darkSecondaryText = Color(0xFFB0B0B0);
   static const Color darkDivider = Color(0xFF3C3C3C);
   
@@ -33,7 +37,7 @@ class AppTheme {
   
   // Helper methods
   static Color getTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? darkText : lightText;
+    return Theme.of(context).brightness == Brightness.dark ? darkTextLight : lightText;
   }
   
   static Color getBackgroundColor(BuildContext context) {
@@ -45,11 +49,15 @@ class AppTheme {
   }
   
   static Color getSecondaryTextColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? darkSecondaryText : lightSecondaryText;
+    return Theme.of(context).brightness == Brightness.dark ? darkSecondaryText : lightTextSecondary;
   }
   
   static Color getDividerColor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark ? darkDivider : lightDivider;
+  }
+  
+  static Color getSurfaceColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? darkSurface : lightSurface;
   }
   
   static ThemeData lightTheme = ThemeData(
@@ -93,7 +101,7 @@ class AppTheme {
       ),
       bodyMedium: TextStyle(
         fontSize: 14,
-        color: lightSecondaryText,
+        color: lightTextSecondary,
       ),
       labelLarge: TextStyle(
         fontSize: 14,
@@ -117,7 +125,7 @@ class AppTheme {
       elevation: 0,
       centerTitle: true,
       backgroundColor: Colors.transparent,
-      foregroundColor: darkText,
+      foregroundColor: darkTextLight,
     ),
     cardTheme: CardThemeData(
       elevation: 4,
@@ -131,16 +139,16 @@ class AppTheme {
       headlineLarge: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        color: darkText,
+        color: darkTextLight,
       ),
       headlineMedium: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: darkText,
+        color: darkTextLight,
       ),
       bodyLarge: TextStyle(
         fontSize: 16,
-        color: darkText,
+        color: darkTextLight,
       ),
       bodyMedium: TextStyle(
         fontSize: 14,
@@ -149,7 +157,7 @@ class AppTheme {
       labelLarge: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: darkText,
+        color: darkTextLight,
       ),
     ),
   );
