@@ -13,11 +13,11 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.19.0'
           channel: 'stable'
 
       - name: Save user code
         run: |
-          # حفظ الكود الخاص بالمستخدم
           mkdir -p /tmp/user_code
           cp -r lib /tmp/user_code/ 2>/dev/null || true
           cp -r assets /tmp/user_code/ 2>/dev/null || true
@@ -27,67 +27,107 @@ jobs:
           cp codemagic.yaml /tmp/user_code/ 2>/dev/null || true
           echo "User code saved"
 
-      - name: Create fresh Flutter project
+      - name: Create fresh Flutter project with older version
         run: |
-          # إنشاء مشروع Flutter جديد
           cd /tmp
           rm -rf /tmp/fresh_project
           flutter create --org com.flexyemen --project-name flex_yemen fresh_project
           cd $GITHUB_WORKSPACE
-          # نسخ المشروع الجديد إلى المجلد الحالي
-          cp -r /tmp/fresh_project/. .
-          echo "Fresh project created"
+          rm -rf android ios linux macos web windows
+          cp -r /tmp/fresh_project/android .
+          cp -r /tmp/fresh_project/ios . 2>/dev/null || true
+          echo "Fresh Android project created"
 
       - name: Restore user code
         run: |
-          # استعادة كود المستخدم
           cp -r /tmp/user_code/lib/* lib/ 2>/dev/null || true
           cp -r /tmp/user_code/assets/* assets/ 2>/dev/null || true
           cp /tmp/user_code/pubspec.yaml . 2>/dev/null || true
-          cp -r /tmp/user_code/.github . 2>/dev/null || true
-          cp /tmp/user_code/README.md . 2>/dev/null || true
-          cp /tmp/user_code/codemagic.yaml . 2>/dev/null || true
           echo "User code restored"
 
-      - name: Enable desugaring in build.gradle
+      - name: Fix build.gradle for desugaring
         run: |
-          # تمكين desugaring في ملف build.gradle
-          cd android/app
-          
-          # إضافة coreLibraryDesugaringEnabled
-          sed -i '/compileOptions {/a \                coreLibraryDesugaringEnabled true' build.gradle
-          
-          # إضافة dependency desugar_jdk_libs
-          sed -i '/dependencies {/a \    coreLibraryDesugaring '\''com.android.tools:desugar_jdk_libs:2.0.4'\''' build.gradle
-          
-          # إضافة multiDexEnabled
-          sed -i '/defaultConfig {/a \                multiDexEnabled true' build.gradle
-          
-          # تحديث minSdk إلى 21
-          sed -i 's/minSdk [0-9]*/minSdk 21/g' build.gradle
-          
-          cd $GITHUB_WORKSPACE
-          echo "Desugaring enabled"
+          cat > android/app/build.gradle << 'GRADLE'
+          def localProperties = new Properties()
+          def localPropertiesFile = rootProject.file('local.properties')
+          if (localPropertiesFile.exists()) {
+              localPropertiesFile.withReader('UTF-8') { reader ->
+                  localProperties.load(reader)
+              }
+          }
 
-      - name: Set app name and package
+          def flutterRoot = localProperties.getProperty('flutter.sdk')
+          if (flutterRoot == null) {
+              throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+          }
+
+          def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+          if (flutterVersionCode == null) {
+              flutterVersionCode = '1'
+          }
+
+          def flutterVersionName = localProperties.getProperty('flutter.versionName')
+          if (flutterVersionName == null) {
+              flutterVersionName = '1.0'
+          }
+
+          apply plugin: 'com.android.application'
+          apply plugin: 'kotlin-android'
+          apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+          android {
+              compileSdkVersion 34
+              ndkVersion flutter.ndkVersion
+
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_1_8
+                  targetCompatibility JavaVersion.VERSION_1_8
+                  coreLibraryDesugaringEnabled true
+              }
+
+              kotlinOptions {
+                  jvmTarget = '1.8'
+              }
+
+              sourceSets {
+                  main.java.srcDirs += 'src/main/kotlin'
+              }
+
+              defaultConfig {
+                  applicationId "com.flexyemen.flex_yemen"
+                  minSdkVersion 21
+                  targetSdkVersion 34
+                  versionCode flutterVersionCode.toInteger()
+                  versionName flutterVersionName
+                  multiDexEnabled true
+              }
+
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.debug
+                  }
+              }
+          }
+
+          flutter {
+              source '../..'
+          }
+
+          dependencies {
+              implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+              coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+          }
+          GRADLE
+
+      - name: Update AndroidManifest.xml
         run: |
-          # تغيير اسم التطبيق
           sed -i 's/android:label="flex_yemen"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
-          
-          # تحديث package name
-          sed -i 's/package="com.example.flex_yemen"/package="com.flexyemen.flex_yemen"/g' android/app/src/main/AndroidManifest.xml
-          
-          echo "App name updated"
 
       - name: Get dependencies
-        run: |
-          flutter pub get
-          echo "Dependencies installed"
+        run: flutter pub get
 
       - name: Build APK (split-per-abi)
-        run: |
-          flutter build apk --release --split-per-abi
-          echo "APK built successfully"
+        run: flutter build apk --release --split-per-abi
 
       - name: Upload APKs
         uses: actions/upload-artifact@v4
