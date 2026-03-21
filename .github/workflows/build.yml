@@ -3,71 +3,44 @@ name: Build Flex Yemen
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.22.0'
-        channel: 'stable'
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
 
-    - name: Get dependencies
-      run: flutter pub get
+      - name: Create fresh Flutter project
+        run: |
+          mkdir -p /tmp/fresh
+          cd /tmp/fresh
+          flutter create --org com.flexyemen --project-name fresh_project .
+          cd $GITHUB_WORKSPACE
+          cp -r lib /tmp/fresh/
+          cp -r assets /tmp/fresh/ 2>/dev/null || true
+          cp pubspec.yaml /tmp/fresh/
+          cp .env /tmp/fresh/ 2>/dev/null || true
+          rm -rf lib assets pubspec.yaml .env android ios
+          cp -r /tmp/fresh/. .
+          rm -rf /tmp/fresh
 
-    - name: Clean old Android folder
-      run: |
-        rm -rf android/
-        echo "Removed old Android folder"
+      - name: Set app name
+        run: |
+          sed -i 's/android:label="fresh_project"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
 
-    - name: Recreate Android folder
-      run: |
-        flutter create --platforms=android .
-        echo "Android folder recreated with v2 embedding"
+      - name: Get dependencies
+        run: flutter pub get
 
-    - name: Update AndroidManifest.xml
-      run: |
-        cat > android/app/src/main/AndroidManifest.xml << 'XML'
-        <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-            <application
-                android:label="Flex Yemen"
-                android:name="${applicationName}"
-                android:icon="@mipmap/ic_launcher">
-                <activity
-                    android:name=".MainActivity"
-                    android:exported="true"
-                    android:launchMode="singleTop"
-                    android:theme="@style/LaunchTheme"
-                    android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-                    android:hardwareAccelerated="true"
-                    android:windowSoftInputMode="adjustResize">
-                    <meta-data
-                        android:name="io.flutter.embedding.android.NormalTheme"
-                        android:resource="@style/NormalTheme" />
-                    <intent-filter>
-                        <action android:name="android.intent.action.MAIN"/>
-                        <category android:name="android.intent.category.LAUNCHER"/>
-                    </intent-filter>
-                </activity>
-                <meta-data
-                    android:name="flutterEmbedding"
-                    android:value="2" />
-            </application>
-        </manifest>
-        XML
+      - name: Build APK (split-per-abi)
+        run: flutter build apk --release --split-per-abi
 
-    - name: Build APK
-      run: flutter build apk --release
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
-        path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/*.apk
