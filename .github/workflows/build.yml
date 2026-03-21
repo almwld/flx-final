@@ -14,188 +14,25 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.0'
-          channel: 'stable'
 
-      - name: Save user code
+      - name: Save code
         run: |
-          mkdir -p /tmp/user_code
-          cp -r lib /tmp/user_code/ 2>/dev/null || true
-          cp -r assets /tmp/user_code/ 2>/dev/null || true
-          cp pubspec.yaml /tmp/user_code/ 2>/dev/null || true
-          cp -r .github /tmp/user_code/ 2>/dev/null || true
-          echo "User code saved"
+          mkdir /tmp/code
+          cp -r lib assets pubspec.yaml /tmp/code/
 
-      - name: Create fresh Flutter project
+      - name: Clean and recreate project
         run: |
-          cd /tmp
-          rm -rf /tmp/fresh_project
-          flutter create --org com.flexyemen --project-name flex_yemen fresh_project
-          cd $GITHUB_WORKSPACE
-          rm -rf android ios linux macos web windows
-          cp -r /tmp/fresh_project/android .
-          cp -r /tmp/fresh_project/ios . 2>/dev/null || true
-          echo "Fresh Android project created"
+          rm -rf .gitignore android ios linux macos web windows
+          flutter create --org com.flexyemen .
 
-      - name: Restore user code
-        run: |
-          cp -r /tmp/user_code/lib/* lib/ 2>/dev/null || true
-          cp -r /tmp/user_code/assets/* assets/ 2>/dev/null || true
-          cp /tmp/user_code/pubspec.yaml . 2>/dev/null || true
-          echo "User code restored"
+      - name: Restore code
+        run: cp -r /tmp/code/* .
 
-      - name: Update Gradle wrapper to 8.0
-        run: |
-          cd android
-          # تحديث gradle-wrapper.properties
-          cat > gradle/wrapper/gradle-wrapper.properties << 'GRADLE'
-          distributionBase=GRADLE_USER_HOME
-          distributionPath=wrapper/dists
-          distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-all.zip
-          zipStoreBase=GRADLE_USER_HOME
-          zipStorePath=wrapper/dists
-          GRADLE
-          cd $GITHUB_WORKSPACE
-          echo "Gradle wrapper updated to 8.0"
-
-      - name: Fix build.gradle files
-        run: |
-          # Update settings.gradle
-          cat > android/settings.gradle << 'SETTINGS'
-          pluginManagement {
-              def flutterSdkPath = {
-                  def properties = new Properties()
-                  file("local.properties").withInputStream { properties.load(it) }
-                  def flutterSdkPath = properties.getProperty("flutter.sdk")
-                  assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
-                  return flutterSdkPath
-              }
-              settings.ext.flutterSdkPath = flutterSdkPath()
-              includeBuild("${settings.ext.flutterSdkPath}/packages/flutter_tools/gradle")
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          plugins {
-              id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-              id "com.android.application" version "8.1.0" apply false
-              id "org.jetbrains.kotlin.android" version "1.9.0" apply false
-          }
-          include ":app"
-          SETTINGS
-
-          # Update build.gradle
-          cat > android/build.gradle << 'BUILD'
-          allprojects {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
-          rootProject.buildDir = '../build'
-          subprojects {
-              project.buildDir = "${rootProject.buildDir}/${project.name}"
-          }
-          subprojects {
-              project.evaluationDependsOn(':app')
-          }
-          tasks.register("clean", Delete) {
-              delete rootProject.buildDir
-          }
-          BUILD
-
-          # Update app/build.gradle
-          cat > android/app/build.gradle << 'APP'
-          plugins {
-              id "com.android.application"
-              id "kotlin-android"
-              id "dev.flutter.flutter-gradle-plugin"
-          }
-
-          def localProperties = new Properties()
-          def localPropertiesFile = rootProject.file('local.properties')
-          if (localPropertiesFile.exists()) {
-              localPropertiesFile.withReader('UTF-8') { reader ->
-                  localProperties.load(reader)
-              }
-          }
-
-          def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-          if (flutterVersionCode == null) {
-              flutterVersionCode = '1'
-          }
-
-          def flutterVersionName = localProperties.getProperty('flutter.versionName')
-          if (flutterVersionName == null) {
-              flutterVersionName = '1.0'
-          }
-
-          android {
-              compileSdk 34
-              ndkVersion flutter.ndkVersion
-
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_1_8
-                  targetCompatibility JavaVersion.VERSION_1_8
-                  coreLibraryDesugaringEnabled true
-              }
-
-              kotlinOptions {
-                  jvmTarget = '1.8'
-              }
-
-              sourceSets {
-                  main.java.srcDirs += 'src/main/kotlin'
-              }
-
-              defaultConfig {
-                  applicationId "com.flexyemen.flex_yemen"
-                  minSdk 21
-                  targetSdk 34
-                  versionCode flutterVersionCode.toInteger()
-                  versionName flutterVersionName
-                  multiDexEnabled true
-              }
-
-              buildTypes {
-                  release {
-                      signingConfig signingConfigs.debug
-                  }
-              }
-          }
-
-          flutter {
-              source '../..'
-          }
-
-          dependencies {
-              coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
-          }
-          APP
-
-      - name: Fix pubspec.yaml versions
-        run: |
-          # تحديث إصدارات الحزم
-          sed -i 's/path_provider: .*/path_provider: ^2.0.0/g' pubspec.yaml
-          sed -i 's/flutter_local_notifications: .*/flutter_local_notifications: ^17.0.0/g' pubspec.yaml
-          sed -i 's/supabase_flutter: .*/supabase_flutter: ^2.0.0/g' pubspec.yaml
-          sed -i 's/url_launcher: .*/url_launcher: ^6.0.0/g' pubspec.yaml
-          echo "pubspec.yaml updated"
-
-      - name: Update AndroidManifest.xml
-        run: |
-          sed -i 's/android:label="flex_yemen"/android:label="Flex Yemen Market"/g' android/app/src/main/AndroidManifest.xml
-          sed -i 's/package="com.example.flex_yemen"/package="com.flexyemen.flex_yemen"/g' android/app/src/main/AndroidManifest.xml
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build APK
+      - name: Build
         run: flutter build apk --release --split-per-abi
 
-      - name: Upload APKs
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: app
           path: build/app/outputs/flutter-apk/*.apk
