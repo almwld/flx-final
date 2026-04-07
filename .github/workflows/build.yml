@@ -19,6 +19,11 @@ jobs:
           channel: 'stable'
           cache: true
       
+      - name: Enable AndroidX
+        run: |
+          echo "android.useAndroidX=true" >> android/gradle.properties
+          echo "android.enableJetifier=true" >> android/gradle.properties
+      
       - name: Clean project
         run: |
           rm -rf build .dart_tool
