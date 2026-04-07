@@ -1,135 +1,135 @@
 # Flex Yemen - منصة التجارة الإلكترونية اليمنية
 
-تطبيق Flex Yemen هو سوق إلكتروني يمني متكامل يجمع بين البيع والشراء، الخدمات المالية، التواصل الفوري، والمزيد.
+## نظرة عامة
+Flex Yemen هو تطبيق تجارة إلكترونية متكامل مصمم خصيصاً للسوق اليمني. يوفر التطبيق منصة شاملة للبيع والشراء مع دعم كامل للخدمات المالية.
 
-## الميزات الرئيسية
+## المميزات الرئيسية
 
-- **نظام مصادقة كامل**: تسجيل الدخول، إنشاء حساب، استعادة كلمة المرور
-- **محفظة إلكترونية متعددة العملات**: ريال يمني، ريال سعودي، دولار أمريكي
-- **نظام إعلانات متكامل**: إضافة، عرض، بحث، فلترة
-- **نظام مزادات**: مزادات حية مع عداد زمني
-- **دردشة فورية**: تواصل بين المشترين والبائعين
-- **نظام تقييمات**: تقييم المنتجات والبائعين
-- **إشعارات**: إشعارات فورية للطلبات والرسائل
-- **خرائط**: عرض المنتجات على الخريطة
+### 🏠 الصفحة الرئيسية
+- سلايدر ترويجي تلقائي
+- بطاقة حديقة فلكس (Flex Garden)
+- الأقسام الرئيسية (عقارات، سيارات، إلكترونيات، أزياء)
+- مزاد الجنابي الأسبوعي
+- العقارات والاستثمارات
+- منتجات مقترحة
+
+### 🗺️ الخريطة التفاعلية
+- خريطة تفاعلية باستخدام OpenStreetMap
+- عرض المتاجر القريبة
+- تحديد الموقع الحالي
+- بطاقات معلومات المتاجر
+
+### 🌟 حديقة فلكس (Flex Garden)
+- نظام نقاط المكافآت
+- مهام يومية
+- ألعاب وفعاليات
+- متجر الجوائز
+- قائمة المتصدرين
+
+### 💰 المحفظة الإلكترونية
+- إيداع وسحب الأموال
+- التحويلات المالية
+- 22+ خدمة مالية متنوعة
+- سجل العمليات
+
+### 👤 الملف الشخصي
+- إدارة الإعلانات
+- المفضلة والطلبات
+- المتابعون والمراجعات
+- الإعدادات المتقدمة
 
 ## هيكل المشروع
 
 ```
 lib/
-├── main.dart                    # نقطة الدخول الرئيسية
-├── models/                      # نماذج البيانات
-│   ├── user_model.dart
-│   ├── product_model.dart
-│   ├── wallet_model.dart
-│   ├── rating_model.dart
-│   └── message_model.dart
-├── providers/                   # إدارة الحالة
-│   └── theme_manager.dart
-├── services/                    # الخدمات
-│   ├── supabase_service.dart
-│   ├── location_service.dart
-│   └── cache/
-│       └── local_storage_service.dart
-├── theme/                       # الثيم والتصميم
-│   └── app_theme.dart
-├── utils/                       # أدوات مساعدة
-│   └── responsive.dart
-├── widgets/                     # ويدجات مشتركة
-│   ├── custom_app_bar.dart
-│   ├── custom_button.dart
-│   ├── custom_text_field.dart
-│   ├── ad_card.dart
-│   ├── loading_widget.dart
-│   └── empty_state.dart
-└── screens/                     # الشاشات
+├── main.dart                 # نقطة الدخول الرئيسية
+├── theme/
+│   └── app_theme.dart        # الثيم والألوان
+├── services/
+│   ├── cache/
+│   │   └── local_storage_service.dart  # التخزين المحلي
+│   └── connection_checker.dart          # مراقبة الاتصال
+├── providers/
+│   ├── theme_manager.dart    # إدارة الثيم
+│   └── auth_provider.dart    # إدارة المصادقة
+├── models/
+│   ├── store_model.dart      # نموذج المتجر
+│   └── product_model.dart    # نموذج المنتج
+├── widgets/
+│   ├── custom_app_bar.dart   # الشريط العلوي
+│   └── custom_button.dart    # الأزرار المخصصة
+└── screens/
     ├── splash_screen.dart
     ├── login_screen.dart
     ├── register_screen.dart
     ├── main_navigation.dart
     ├── home_screen.dart
+    ├── garden_screen.dart
     ├── profile_screen.dart
     ├── wallet/
-    │   ├── wallet_screen.dart
-    │   ├── deposit_screen.dart
-    │   ├── withdraw_screen.dart
-    │   ├── transfer_screen.dart
-    │   └── ... (22 صفحة)
+    │   └── (22 شاشة للمحفظة)
+    ├── map/
+    │   ├── interactive_map_screen.dart
+    │   └── nearby_stores_screen.dart
+    ├── policy/
+    │   ├── privacy_policy_screen.dart
+    │   ├── security_policy_screen.dart
+    │   ├── terms_screen.dart
+    │   └── vendor_terms_screen.dart
     ├── settings/
-    │   ├── settings_screen.dart
-    │   └── ... (8 صفحات)
-    └── seller/
-        └── seller_dashboard.dart
+    │   └── (6 شاشات إعدادات)
+    ├── seller/
+    │   └── seller_dashboard.dart
+    └── (60+ شاشة إضافية)
 ```
 
 ## التقنيات المستخدمة
 
-- **Flutter 3.22+**
-- **Dart 3.0+**
-- **Supabase**: قاعدة البيانات والمصادقة
-- **Provider**: إدارة الحالة
-- **Hive**: التخزين المحلي
-- **flutter_animate**: الرسوم المتحركة
-- **carousel_slider**: السلايدر
-- **cached_network_image**: تحميل الصور
+- **Flutter 3.22+** - إطار العمل
+- **Dart 3.0+** - لغة البرمجة
+- **Provider** - إدارة الحالة
+- **Supabase** - قاعدة البيانات
+- **Hive + SharedPreferences** - التخزين المحلي
+- **flutter_map** - الخرائط التفاعلية
+- **carousel_slider** - السلايدر
+- **flutter_animate** - الرسوم المتحركة
 
-## التثبيت
+## الألوان الرئيسية
 
-1. استنساخ المستودع:
-```bash
-git clone https://github.com/almwld/Flexy.git
-cd Flexy
+```dart
+static const goldColor = Color(0xFFD4AF37);      // الذهبي الرئيسي
+static const goldLight = Color(0xFFF4D03F);       // الذهبي الفاتح
+static const goldDark = Color(0xFFB8860B);        // الذهبي الداكن
+static const success = Color(0xFF2ECC71);         // أخضر للنجاح
+static const error = Color(0xFFE74C3C);           // أحمر للخطأ
+static const info = Color(0xFF3498DB);             // أزرق للمعلومات
+static const warning = Color(0xFFF39C12);          // برتقالي للتحذير
 ```
 
-2. تثبيت الاعتماديات:
+## كيفية التشغيل
+
+1. تأكد من تثبيت Flutter 3.22+:
+```bash
+flutter --version
+```
+
+2. احصل على依赖ات المشروع:
 ```bash
 flutter pub get
 ```
 
-3. إعداد ملف `.env`:
-```
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-MAP_API_KEY=your-map-key
-```
-
-4. تشغيل التطبيق:
+3. شغل التطبيق:
 ```bash
 flutter run
 ```
 
-## البناء
+## ملاحظات هامة
 
-### APK
-```bash
-flutter build apk --release
-```
-
-### App Bundle
-```bash
-flutter build appbundle --release
-```
-
-## المساهمة
-
-نرحب بمساهماتكم! يرجى اتباع الخطوات التالية:
-
-1. عمل Fork للمستودع
-2. إنشاء فرع جديد (`git checkout -b feature/amazing-feature`)
-3. عمل Commit للتغييرات (`git commit -m 'Add amazing feature'`)
-4. رفع الفرع (`git push origin feature/amazing-feature`)
-5. فتح Pull Request
+- التطبيق يدعم الوضع الليلي والنهاري
+- واجهة عربية كاملة (RTL)
+- تصميم متجاوب مع جميع أحجام الشاشات
+- دعم كامل للوضع Offline First
 
 ## الترخيص
 
-هذا المشروع مرخص تحت رخصة MIT.
-
-## التواصل
-
-- البريد الإلكتروني: support@flexyemen.com
-- واتساب: 777-123-456
-- تليجرام: @flexyemen
-
----
-
-**Flex Yemen - منصة التجارة الإلكترونية اليمنية الأولى**
+جميع الحقوق محفوظة © 2026 Flex Yemen

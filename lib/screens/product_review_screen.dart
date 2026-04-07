@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
-class ProductReviewScreen extends StatefulWidget {
+class ProductReviewScreen extends StatelessWidget {
   const ProductReviewScreen({super.key});
-
-  @override
-  State<ProductReviewScreen> createState() => _ProductReviewScreenState();
-}
-
-class _ProductReviewScreenState extends State<ProductReviewScreen> {
-  int _rating = 0;
-  final _reviewController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,33 +11,15 @@ class _ProductReviewScreenState extends State<ProductReviewScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'تقييم المنتج'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('كيف كان المنتج؟', style: TextStyle(fontFamily: 'Changa', fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.getTextColor(context))),
+            Icon(Icons.star, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(5, (index) => IconButton(
-                icon: Icon(index < _rating ? Icons.star : Icons.star_border, color: AppTheme.goldColor, size: 40),
-                onPressed: () => setState(() => _rating = index + 1),
-              )),
-            ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _reviewController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'اكتب تقييمك هنا...',
-                filled: true,
-                fillColor: AppTheme.getCardColor(context),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-            const SizedBox(height: 24),
-            CustomButton(text: 'إرسال التقييم', onPressed: () {}),
+            const Text('تقييم المنتج', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
       ),

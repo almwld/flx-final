@@ -15,11 +15,11 @@ class TransferNetworkScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.network_check, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            Icon(Icons.network_cell, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
             const SizedBox(height: 16),
-            Text('شبكة التحويل', style: TextStyle(fontFamily: 'Changa', fontSize: 24, color: AppTheme.getTextColor(context))),
+            const Text('شبكة التحويل', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text('قريباً', style: TextStyle(fontFamily: 'Changa', fontSize: 16, color: AppTheme.getSecondaryTextColor(context))),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
       ),

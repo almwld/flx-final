@@ -2,18 +2,8 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/simple_app_bar.dart';
 
-class NotificationsSettingsScreen extends StatefulWidget {
+class NotificationsSettingsScreen extends StatelessWidget {
   const NotificationsSettingsScreen({super.key});
-
-  @override
-  State<NotificationsSettingsScreen> createState() => _NotificationsSettingsScreenState();
-}
-
-class _NotificationsSettingsScreenState extends State<NotificationsSettingsScreen> {
-  bool _allNotifications = true;
-  bool _orderNotifications = true;
-  bool _messageNotifications = true;
-  bool _offerNotifications = true;
 
   @override
   Widget build(BuildContext context) {
@@ -21,34 +11,17 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'إعدادات الإشعارات'),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          SwitchListTile(
-            title: const Text('جميع الإشعارات', style: TextStyle(fontFamily: 'Changa')),
-            value: _allNotifications,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _allNotifications = value),
-          ),
-          SwitchListTile(
-            title: const Text('إشعارات الطلبات', style: TextStyle(fontFamily: 'Changa')),
-            value: _orderNotifications,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _orderNotifications = value),
-          ),
-          SwitchListTile(
-            title: const Text('إشعارات الرسائل', style: TextStyle(fontFamily: 'Changa')),
-            value: _messageNotifications,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _messageNotifications = value),
-          ),
-          SwitchListTile(
-            title: const Text('إشعارات العروض', style: TextStyle(fontFamily: 'Changa')),
-            value: _offerNotifications,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _offerNotifications = value),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.settings, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('إعدادات الإشعارات', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/simple_app_bar.dart';
-import '../../widgets/empty_state.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -9,34 +8,21 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasFavorites = false;
-
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'المفضلة'),
-      body: hasFavorites
-          ? ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: 5,
-              itemBuilder: (context, index) => Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  leading: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(color: AppTheme.goldColor.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                    child: const Icon(Icons.favorite, color: AppTheme.goldColor),
-                  ),
-                  title: Text('منتج ${index + 1}', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                  subtitle: Text('${(index + 1) * 10000} ر.ي', style: const TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor)),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline, color: AppTheme.error),
-                    onPressed: () {},
-                  ),
-                ),
-              ),
-            )
-          : NoFavoritesState(onBrowse: () => Navigator.pushNamed(context, '/all_ads')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.favorite, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('المفضلة', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -5,35 +5,23 @@ import '../../widgets/simple_app_bar.dart';
 class EntertainmentServicesScreen extends StatelessWidget {
   const EntertainmentServicesScreen({super.key});
 
-  final List<Map<String, dynamic>> services = const [
-    {'name': 'Netflix', 'icon': Icons.movie},
-    {'name': 'Shahid', 'icon': Icons.tv},
-    {'name': 'Spotify', 'icon': Icons.music_note},
-    {'name': 'YouTube Premium', 'icon': Icons.play_circle},
-  ];
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'خدمات ترفيه'),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.2),
-        itemCount: services.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(services[index]['icon'], size: 48, color: AppTheme.goldColor),
-                const SizedBox(height: 12),
-                Text(services[index]['name'], style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-              ],
-            ),
-          );
-        },
+      appBar: const SimpleAppBar(title: 'الترفيه'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.movie, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('الترفيه', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
+        ),
       ),
     );
   }

@@ -11,29 +11,17 @@ class PaymentMethodsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'طرق الدفع'),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.account_balance_wallet, color: AppTheme.goldColor),
-              title: Text('المحفظة الإلكترونية', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-              subtitle: const Text('الرصيد: 125,000 ر.ي', style: TextStyle(fontFamily: 'Changa')),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.credit_card, color: AppTheme.goldColor),
-              title: Text('بطاقة ائتمانية', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-              subtitle: const Text('**** **** **** 1234', style: TextStyle(fontFamily: 'Changa')),
-              trailing: TextButton(
-                onPressed: () {},
-                child: const Text('إضافة', style: TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor)),
-              ),
-            ),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.settings, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('طرق الدفع', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
+        ),
       ),
     );
   }

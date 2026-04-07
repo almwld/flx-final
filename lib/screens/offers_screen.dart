@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class OffersScreen extends StatelessWidget {
   const OffersScreen({super.key});
@@ -10,27 +10,17 @@ class OffersScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const CustomAppBar(title: 'العروض'),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.75),
-        itemCount: 6,
-        itemBuilder: (context, index) => Card(
-          child: Column(
-            children: [
-              Expanded(child: Container(color: AppTheme.goldColor.withOpacity(0.1), child: const Icon(Icons.local_offer, color: AppTheme.goldColor))),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  children: [
-                    Text('عرض ${index + 1}', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                    const SizedBox(height: 4),
-                    Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: AppTheme.error.withOpacity(0.1), borderRadius: BorderRadius.circular(8)), child: const Text('-20%', style: TextStyle(fontFamily: 'Changa', color: AppTheme.error))),
-                  ],
-                ),
-              ),
-            ],
-          ),
+      appBar: const SimpleAppBar(title: 'العروض'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.local_offer, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('العروض', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
         ),
       ),
     );

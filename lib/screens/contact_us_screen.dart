@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
@@ -12,17 +11,15 @@ class ContactUsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'تواصل معنا'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(decoration: InputDecoration(labelText: 'الاسم', filled: true, fillColor: AppTheme.getCardColor(context), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none))),
+            Icon(Icons.contact_mail, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
             const SizedBox(height: 16),
-            TextField(decoration: InputDecoration(labelText: 'البريد الإلكتروني', filled: true, fillColor: AppTheme.getCardColor(context), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none))),
-            const SizedBox(height: 16),
-            TextField(maxLines: 4, decoration: InputDecoration(labelText: 'الرسالة', filled: true, fillColor: AppTheme.getCardColor(context), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none))),
-            const SizedBox(height: 24),
-            CustomButton(text: 'إرسال', onPressed: () {}),
+            const Text('تواصل معنا', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
       ),

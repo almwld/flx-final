@@ -10,14 +10,16 @@ class MoneyTransfersScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const SimpleAppBar(title: 'تحويلات مالية'),
+      appBar: const SimpleAppBar(title: 'التحويلات'),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.send, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
             const SizedBox(height: 16),
-            Text('التحويلات المالية', style: TextStyle(fontFamily: 'Changa', fontSize: 24, color: AppTheme.getTextColor(context))),
+            const Text('التحويلات', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
       ),

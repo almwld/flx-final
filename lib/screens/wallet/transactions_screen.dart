@@ -5,42 +5,51 @@ import '../../widgets/simple_app_bar.dart';
 class TransactionsScreen extends StatelessWidget {
   const TransactionsScreen({super.key});
 
-  final List<Map<String, dynamic>> transactions = const [
-    {'type': 'إيداع', 'amount': '+50,000', 'date': '2024-01-15', 'status': 'مكتمل'},
-    {'type': 'سحب', 'amount': '-20,000', 'date': '2024-01-14', 'status': 'مكتمل'},
-    {'type': 'تحويل', 'amount': '-15,000', 'date': '2024-01-13', 'status': 'مكتمل'},
-    {'type': 'دفع', 'amount': '-5,000', 'date': '2024-01-12', 'status': 'مكتمل'},
+  final List<Map<String, dynamic>> _transactions = const [
+    {'type': 'deposit', 'title': 'إيداع', 'amount': 50000, 'date': '2026-03-28', 'status': 'completed'},
+    {'type': 'withdraw', 'title': 'سحب', 'amount': -20000, 'date': '2026-03-27', 'status': 'completed'},
+    {'type': 'transfer', 'title': 'تحويل', 'amount': -15000, 'date': '2026-03-26', 'status': 'completed'},
+    {'type': 'payment', 'title': 'دفع', 'amount': -5000, 'date': '2026-03-25', 'status': 'completed'},
   ];
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'سجل العمليات'),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: transactions.length,
+        itemCount: _transactions.length,
         itemBuilder: (context, index) {
-          final t = transactions[index];
-          return Card(
+          final transaction = _transactions[index];
+          final isPositive = transaction['amount'] > 0;
+          return Container(
             margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: AppTheme.getCardColor(context),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: t['amount'].toString().startsWith('+') ? AppTheme.success.withOpacity(0.1) : AppTheme.error.withOpacity(0.1),
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isPositive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Icon(
-                  t['amount'].toString().startsWith('+') ? Icons.arrow_downward : Icons.arrow_upward,
-                  color: t['amount'].toString().startsWith('+') ? AppTheme.success : AppTheme.error,
+                  isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+                  color: isPositive ? Colors.green : Colors.red,
                 ),
               ),
-              title: Text(t['type'], style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-              subtitle: Text(t['date'], style: TextStyle(fontFamily: 'Changa', color: AppTheme.getSecondaryTextColor(context))),
+              title: Text(transaction['title'] as String),
+              subtitle: Text(transaction['date'] as String),
               trailing: Text(
-                t['amount'],
+                '${isPositive ? '+' : ''}${transaction['amount']} ر.ي',
                 style: TextStyle(
-                  fontFamily: 'Changa',
                   fontWeight: FontWeight.bold,
-                  color: t['amount'].toString().startsWith('+') ? AppTheme.success : AppTheme.error,
+                  color: isPositive ? Colors.green : Colors.red,
                 ),
               ),
             ),

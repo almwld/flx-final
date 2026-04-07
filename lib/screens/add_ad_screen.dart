@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class AddAdScreen extends StatelessWidget {
   const AddAdScreen({super.key});
@@ -12,23 +11,15 @@ class AddAdScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'إضافة إعلان'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              height: 150,
-              decoration: BoxDecoration(color: AppTheme.goldColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.goldColor)),
-              child: const Center(child: Icon(Icons.add_photo_alternate, size: 50, color: AppTheme.goldColor)),
-            ),
+            Icon(Icons.add_circle, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
             const SizedBox(height: 16),
-            TextField(decoration: InputDecoration(labelText: 'عنوان الإعلان', filled: true, fillColor: AppTheme.getCardColor(context), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none))),
-            const SizedBox(height: 16),
-            TextField(decoration: InputDecoration(labelText: 'السعر', filled: true, fillColor: AppTheme.getCardColor(context), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none))),
-            const SizedBox(height: 16),
-            TextField(maxLines: 4, decoration: InputDecoration(labelText: 'الوصف', filled: true, fillColor: AppTheme.getCardColor(context), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none))),
-            const SizedBox(height: 24),
-            CustomButton(text: 'نشر الإعلان', onPressed: () {}),
+            const Text('إضافة إعلان', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
       ),

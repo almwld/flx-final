@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
-import '../../widgets/ad_card.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class AllAdsScreen extends StatelessWidget {
   const AllAdsScreen({super.key});
@@ -11,20 +10,19 @@ class AllAdsScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const CustomAppBar(title: 'جميع الإعلانات'),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.75, crossAxisSpacing: 12, mainAxisSpacing: 12),
-        itemCount: 10,
-        itemBuilder: (context, index) => AdCard(
-          product: _getDummyProduct(index),
-          onTap: () => Navigator.pushNamed(context, '/ad_detail'),
+      appBar: const SimpleAppBar(title: 'جميع الإعلانات'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.list, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('جميع الإعلانات', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
         ),
       ),
     );
-  }
-
-  _getDummyProduct(int index) {
-    return null; // سيتم استبداله بالنموذج الحقيقي
   }
 }

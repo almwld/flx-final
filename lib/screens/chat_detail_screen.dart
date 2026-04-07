@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class ChatDetailScreen extends StatelessWidget {
   const ChatDetailScreen({super.key});
@@ -9,61 +10,18 @@ class ChatDetailScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: AppBar(
-        title: const Row(
+      appBar: const SimpleAppBar(title: 'المحادثة'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(backgroundColor: AppTheme.goldColor, child: Icon(Icons.person, color: Colors.white)),
-            SizedBox(width: 12),
-            Text('محمد أحمد', style: TextStyle(fontFamily: 'Changa')),
+            Icon(Icons.chat_bubble, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('المحادثة', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                final isMe = index % 2 == 0;
-                return Align(
-                  alignment: isMe ? Alignment.centerLeft : Alignment.centerRight,
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isMe ? AppTheme.goldColor : AppTheme.getCardColor(context),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      isMe ? 'مرحباً، هل المنتج متوفر؟' : 'نعم، المنتج متوفر',
-                      style: TextStyle(fontFamily: 'Changa', color: isMe ? AppTheme.darkText : AppTheme.getTextColor(context)),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                IconButton(icon: const Icon(Icons.attach_file), onPressed: () {}),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'اكتب رسالتك...',
-                      filled: true,
-                      fillColor: AppTheme.getCardColor(context),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-                    ),
-                  ),
-                ),
-                IconButton(icon: const Icon(Icons.send, color: AppTheme.goldColor), onPressed: () {}),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

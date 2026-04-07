@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/simple_app_bar.dart';
-import '../../widgets/empty_state.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class MyOrdersScreen extends StatelessWidget {
   const MyOrdersScreen({super.key});
@@ -9,30 +8,21 @@ class MyOrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasOrders = false;
-
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'طلباتي'),
-      body: hasOrders
-          ? ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: 5,
-              itemBuilder: (context, index) => Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  title: Text('طلب #${1000 + index}', style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-                  subtitle: Text('${(index + 1) * 50000} ر.ي', style: const TextStyle(fontFamily: 'Changa', color: AppTheme.goldColor)),
-                  trailing: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(color: AppTheme.success.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                    child: const Text('مكتمل', style: TextStyle(fontFamily: 'Changa', color: AppTheme.success, fontSize: 12)),
-                  ),
-                  onTap: () => Navigator.pushNamed(context, '/order_detail'),
-                ),
-              ),
-            )
-          : NoOrdersState(onShopNow: () => Navigator.pushNamed(context, '/all_ads')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.shopping_bag, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('طلباتي', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
+        ),
+      ),
     );
   }
 }

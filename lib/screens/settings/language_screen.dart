@@ -2,15 +2,8 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/simple_app_bar.dart';
 
-class LanguageScreen extends StatefulWidget {
+class LanguageScreen extends StatelessWidget {
   const LanguageScreen({super.key});
-
-  @override
-  State<LanguageScreen> createState() => _LanguageScreenState();
-}
-
-class _LanguageScreenState extends State<LanguageScreen> {
-  String _selectedLanguage = 'ar';
 
   @override
   Widget build(BuildContext context) {
@@ -18,24 +11,17 @@ class _LanguageScreenState extends State<LanguageScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'اللغة'),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          RadioListTile<String>(
-            title: const Text('العربية', style: TextStyle(fontFamily: 'Changa')),
-            value: 'ar',
-            groupValue: _selectedLanguage,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _selectedLanguage = value!),
-          ),
-          RadioListTile<String>(
-            title: const Text('English', style: TextStyle(fontFamily: 'Changa')),
-            value: 'en',
-            groupValue: _selectedLanguage,
-            activeColor: AppTheme.goldColor,
-            onChanged: (value) => setState(() => _selectedLanguage = value!),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.settings, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('اللغة', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
+        ),
       ),
     );
   }

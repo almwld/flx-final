@@ -13,25 +13,12 @@ class TransferScreen extends StatefulWidget {
 class _TransferScreenState extends State<TransferScreen> {
   final _amountController = TextEditingController();
   final _recipientController = TextEditingController();
-  String _selectedCurrency = 'YER';
-  bool _isLoading = false;
-
-  Future<void> _transfer() async {
-    if (_amountController.text.isEmpty || _recipientController.text.isEmpty) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم التحويل بنجاح', style: TextStyle(fontFamily: 'Changa')), backgroundColor: AppTheme.success),
-      );
-      Navigator.pop(context);
-    }
-  }
+  final _noteController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'تحويل'),
@@ -41,51 +28,63 @@ class _TransferScreenState extends State<TransferScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(gradient: AppTheme.goldGradient, borderRadius: BorderRadius.circular(20)),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.getCardColor(context),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('الرصيد الحالي', style: TextStyle(fontFamily: 'Changa', fontSize: 14, color: AppTheme.darkText)),
-                  SizedBox(height: 8),
-                  Text('125,000 ر.ي', style: TextStyle(fontFamily: 'Changa', fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.darkText)),
+                  const Text('الرصيد المتاح'),
+                  const Text('250,000 ر.ي', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.goldColor)),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
-            Text('رقم المستلم', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             TextField(
               controller: _recipientController,
-              keyboardType: TextInputType.phone,
-              textAlign: TextAlign.right,
-              style: const TextStyle(fontFamily: 'Changa'),
               decoration: InputDecoration(
-                hintText: 'أدخل رقم الهاتف أو رقم الحساب',
+                labelText: 'رقم الهاتف أو البريد الإلكتروني',
+                prefixIcon: const Icon(Icons.person_outline),
                 filled: true,
                 fillColor: AppTheme.getCardColor(context),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                prefixIcon: const Icon(Icons.person_outline),
               ),
             ),
-            const SizedBox(height: 24),
-            Text('المبلغ', style: TextStyle(fontFamily: 'Changa', fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.getTextColor(context))),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,
-              textAlign: TextAlign.right,
-              style: const TextStyle(fontFamily: 'Changa'),
               decoration: InputDecoration(
-                hintText: 'أدخل المبلغ',
+                labelText: 'المبلغ',
+                suffixText: 'ر.ي',
+                filled: true,
+                fillColor: AppTheme.getCardColor(context),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _noteController,
+              decoration: InputDecoration(
+                labelText: 'ملاحظة (اختياري)',
                 filled: true,
                 fillColor: AppTheme.getCardColor(context),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
               ),
             ),
             const SizedBox(height: 32),
-            CustomButton(text: 'تحويل', onPressed: _transfer, isLoading: _isLoading),
+            CustomButton(
+              text: 'تحويل',
+              onPressed: () {
+                if (_recipientController.text.isEmpty || _amountController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يرجى ملء جميع الحقول المطلوبة')));
+                  return;
+                }
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('جاري معالجة التحويل...')));
+              },
+            ),
           ],
         ),
       ),

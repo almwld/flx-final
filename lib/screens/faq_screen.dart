@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class FaqScreen extends StatelessWidget {
   const FaqScreen({super.key});
-
-  final List<Map<String, String>> faqs = const [
-    {'question': 'كيف أقوم بإنشاء حساب؟', 'answer': 'يمكنك إنشاء حساب من خلال الضغط على زر إنشاء حساب وملء البيانات المطلوبة.'},
-    {'question': 'كيف أضيف إعلان؟', 'answer': 'اضغط على زر + في الشريط السفلي واملأ تفاصيل الإعلان.'},
-    {'question': 'كيف أدفع؟', 'answer': 'يمكنك الدفع من خلال المحفظة الإلكترونية أو التحويل البنكي.'},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +11,16 @@ class FaqScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'الأسئلة الشائعة'),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: faqs.length,
-        itemBuilder: (context, index) => Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ExpansionTile(
-            title: Text(faqs[index]['question']!, style: TextStyle(fontFamily: 'Changa', color: AppTheme.getTextColor(context))),
-            children: [Padding(padding: const EdgeInsets.all(16), child: Text(faqs[index]['answer']!, style: TextStyle(fontFamily: 'Changa', color: AppTheme.getSecondaryTextColor(context))))],
-          ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.help, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('الأسئلة الشائعة', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
+          ],
         ),
       ),
     );

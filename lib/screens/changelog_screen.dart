@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/simple_app_bar.dart';
+import '../theme/app_theme.dart';
+import '../widgets/simple_app_bar.dart';
 
 class ChangelogScreen extends StatelessWidget {
   const ChangelogScreen({super.key});
@@ -11,26 +11,15 @@ class ChangelogScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       appBar: const SimpleAppBar(title: 'سجل التحديثات'),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildVersionCard('الإصدار 1.0.0', '2024-01-15', ['إطلاق التطبيق', 'إضافة المحفظة الإلكترونية', 'نظام الدردشة']),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVersionCard(String version, String date, List<String> changes) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(version, style: const TextStyle(fontFamily: 'Changa', fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.goldColor)), Text(date, style: const TextStyle(fontFamily: 'Changa', color: AppTheme.darkTextSecondary))]),
-            const SizedBox(height: 12),
-            ...changes.map((change) => Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [const Icon(Icons.check_circle, color: AppTheme.success, size: 16), const SizedBox(width: 8), Text(change, style: const TextStyle(fontFamily: 'Changa'))]))),
+            Icon(Icons.update, size: 80, color: AppTheme.goldColor.withOpacity(0.5)),
+            const SizedBox(height: 16),
+            const Text('سجل التحديثات', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('سيتم إضافة هذه الميزة قريباً', style: TextStyle(color: AppTheme.getSecondaryTextColor(context))),
           ],
         ),
       ),

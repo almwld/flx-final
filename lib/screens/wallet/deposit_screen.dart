@@ -3,7 +3,6 @@ import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/simple_app_bar.dart';
 
-/// شاشة الإيداع
 class DepositScreen extends StatefulWidget {
   const DepositScreen({super.key});
 
@@ -13,46 +12,14 @@ class DepositScreen extends StatefulWidget {
 
 class _DepositScreenState extends State<DepositScreen> {
   final _amountController = TextEditingController();
-  String _selectedCurrency = 'YER';
-  String _selectedMethod = 'كريمي';
-  bool _isLoading = false;
+  String? _selectedMethod;
 
-  final List<String> _currencies = ['YER', 'SAR', 'USD'];
-  final List<String> _methods = ['كريمي', 'بنكي', 'تحويل', 'فودافون كاش'];
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _deposit() async {
-    if (_amountController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('يرجى إدخال المبلغ', style: TextStyle(fontFamily: 'Changa')),
-          backgroundColor: AppTheme.error,
-        ),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    // محاكاة عملية الإيداع
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إرسال طلب الإيداع بنجاح', style: TextStyle(fontFamily: 'Changa')),
-          backgroundColor: AppTheme.success,
-        ),
-      );
-      Navigator.pop(context);
-    }
-  }
+  final List<Map<String, dynamic>> _paymentMethods = [
+    {'id': 'bank', 'name': 'تحويل بنكي', 'icon': Icons.account_balance},
+    {'id': 'card', 'name': 'بطاقة ائتمانية', 'icon': Icons.credit_card},
+    {'id': 'wallet', 'name': 'محفظة إلكترونية', 'icon': Icons.account_balance_wallet},
+    {'id': 'cash', 'name': 'دفع نقدي', 'icon': Icons.money},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -66,148 +33,97 @@ class _DepositScreenState extends State<DepositScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // بطاقة الرصيد
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: AppTheme.goldGradient,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'الرصيد الحالي',
-                    style: TextStyle(
-                      fontFamily: 'Changa',
-                      fontSize: 14,
-                      color: AppTheme.darkText,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    '125,000 ر.ي',
-                    style: TextStyle(
-                      fontFamily: 'Changa',
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.darkText,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            // اختيار العملة
-            Text(
-              'العملة',
-              style: TextStyle(
-                fontFamily: 'Changa',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.getTextColor(context),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              children: _currencies.map((currency) {
-                final isSelected = _selectedCurrency == currency;
-                return ChoiceChip(
-                  label: Text(
-                    currency,
-                    style: TextStyle(
-                      fontFamily: 'Changa',
-                      color: isSelected ? AppTheme.darkText : AppTheme.getTextColor(context),
-                    ),
-                  ),
-                  selected: isSelected,
-                  selectedColor: AppTheme.goldColor,
-                  backgroundColor: AppTheme.getCardColor(context),
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() => _selectedCurrency = currency);
-                    }
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
-            // المبلغ
+            // Amount Input
             Text(
               'المبلغ',
               style: TextStyle(
                 fontFamily: 'Changa',
                 fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
                 color: AppTheme.getTextColor(context),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,
-              textAlign: TextAlign.right,
-              style: const TextStyle(fontFamily: 'Changa'),
               decoration: InputDecoration(
                 hintText: 'أدخل المبلغ',
+                suffixText: 'ر.ي',
                 filled: true,
                 fillColor: AppTheme.getCardColor(context),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                prefixIcon: Container(
-                  margin: const EdgeInsets.all(12),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.goldColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Text(
-                    'ر.ي',
-                    style: TextStyle(
-                      fontFamily: 'Changa',
-                      color: AppTheme.goldColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ),
             ),
+
             const SizedBox(height: 24),
-            // طريقة الدفع
+
+            // Quick Amounts
+            Wrap(
+              spacing: 8,
+              children: [5000, 10000, 25000, 50000, 100000].map((amount) {
+                return ActionChip(
+                  label: Text('$amount ر.ي'),
+                  onPressed: () => _amountController.text = amount.toString(),
+                  backgroundColor: AppTheme.getCardColor(context),
+                );
+              }).toList(),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Payment Methods
             Text(
               'طريقة الدفع',
               style: TextStyle(
                 fontFamily: 'Changa',
                 fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
                 color: AppTheme.getTextColor(context),
               ),
             ),
             const SizedBox(height: 12),
-            ..._methods.map((method) {
-              return RadioListTile<String>(
-                title: Text(
-                  method,
-                  style: const TextStyle(fontFamily: 'Changa'),
+            ..._paymentMethods.map((method) {
+              final isSelected = _selectedMethod == method['id'];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: AppTheme.getCardColor(context),
+                  borderRadius: BorderRadius.circular(12),
+                  border: isSelected
+                      ? Border.all(color: AppTheme.goldColor, width: 2)
+                      : null,
                 ),
-                value: method,
-                groupValue: _selectedMethod,
-                activeColor: AppTheme.goldColor,
-                onChanged: (value) {
-                  setState(() => _selectedMethod = value!);
-                },
+                child: ListTile(
+                  leading: Icon(method['icon'] as IconData, color: AppTheme.goldColor),
+                  title: Text(method['name'] as String),
+                  trailing: isSelected
+                      ? const Icon(Icons.check_circle, color: AppTheme.goldColor)
+                      : const Icon(Icons.circle_outlined, color: Colors.grey),
+                  onTap: () => setState(() => _selectedMethod = method['id'] as String),
+                ),
               );
-            }).toList(),
+            }),
+
             const SizedBox(height: 32),
-            // زر الإيداع
+
             CustomButton(
               text: 'إيداع',
-              onPressed: _deposit,
-              isLoading: _isLoading,
+              onPressed: () {
+                if (_amountController.text.isEmpty || _selectedMethod == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('يرجى إدخال المبلغ واختيار طريقة الدفع')),
+                  );
+                  return;
+                }
+                // Process deposit
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('جاري معالجة الإيداع...')),
+                );
+              },
             ),
           ],
         ),

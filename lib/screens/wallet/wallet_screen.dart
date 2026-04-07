@@ -1,50 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/custom_app_bar.dart';
+import '../../widgets/simple_app_bar.dart';
 
-/// شاشة المحفظة الرئيسية
-class WalletScreen extends StatefulWidget {
+class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
 
-  @override
-  State<WalletScreen> createState() => _WalletScreenState();
-}
-
-class _WalletScreenState extends State<WalletScreen> {
-  int _currentCardIndex = 0;
-  
-  // بيانات وهمية للرصيد
-  final List<Map<String, dynamic>> _balances = [
-    {'currency': 'YER', 'amount': 125000.0, 'symbol': 'ر.ي', 'name': 'ريال يمني'},
-    {'currency': 'SAR', 'amount': 2500.0, 'symbol': 'ر.س', 'name': 'ريال سعودي'},
-    {'currency': 'USD', 'amount': 500.0, 'symbol': '\$', 'name': 'دولار أمريكي'},
-  ];
-
-  // خدمات المحفظة
-  final List<Map<String, dynamic>> _services = [
-    {'name': 'إيداع', 'icon': Icons.arrow_downward, 'route': '/deposit'},
-    {'name': 'تحويل', 'icon': Icons.swap_horiz, 'route': '/transfer'},
-    {'name': 'سحب', 'icon': Icons.arrow_upward, 'route': '/withdraw'},
-    {'name': 'فواتير', 'icon': Icons.receipt_long, 'route': '/payments'},
-    {'name': 'العمليات', 'icon': Icons.history, 'route': '/transactions'},
-    {'name': 'شبكة تحويل', 'icon': Icons.network_cell, 'route': '/transfer_network'},
-    {'name': 'ترفيه', 'icon': Icons.movie, 'route': '/entertainment'},
-    {'name': 'ألعاب', 'icon': Icons.sports_esports, 'route': '/games'},
-    {'name': 'تطبيقات', 'icon': Icons.apps, 'route': '/apps'},
-    {'name': 'بطاقات نت', 'icon': Icons.card_giftcard, 'route': '/gift_cards'},
-    {'name': 'أمازون', 'icon': Icons.shopping_cart, 'route': '/amazon_gift_cards'},
-    {'name': 'بنوك ومحافظ', 'icon': Icons.account_balance, 'route': '/banks_wallets'},
-    {'name': 'تحويلات', 'icon': Icons.send, 'route': '/money_transfers'},
-    {'name': 'مدفوعات حكومية', 'icon': Icons.account_balance_wallet, 'route': '/government_payments'},
-    {'name': 'فلكسي', 'icon': Icons.flash_on, 'route': '/jib'},
-    {'name': 'سحب نقدي', 'icon': Icons.money, 'route': '/cash_withdrawal'},
-    {'name': 'تعليم عالي', 'icon': Icons.school, 'route': '/universities'},
-    {'name': 'شحن وسداد', 'icon': Icons.phone_android, 'route': '/recharge_payment'},
-    {'name': 'شحن رصيد', 'icon': Icons.signal_cellular_alt, 'route': '/recharge_credit'},
-    {'name': 'سداد باقات', 'icon': Icons.wifi, 'route': '/pay_bundles'},
-    {'name': 'إنترنت وهاتف', 'icon': Icons.router, 'route': '/internet_landline'},
-    {'name': 'استلام حوالة', 'icon': Icons.download, 'route': '/receive_transfer'},
+  final List<Map<String, dynamic>> _walletServices = const [
+    {'icon': Icons.account_balance_wallet, 'title': 'إيداع', 'route': '/deposit'},
+    {'icon': Icons.money_off, 'title': 'سحب', 'route': '/withdraw'},
+    {'icon': Icons.swap_horiz, 'title': 'تحويل', 'route': '/transfer'},
+    {'icon': Icons.payment, 'title': 'مدفوعات', 'route': '/payments'},
+    {'icon': Icons.receipt_long, 'title': 'عمليات', 'route': '/transactions'},
+    {'icon': Icons.network_cell, 'title': 'شبكة التحويل', 'route': '/transfer_network'},
+    {'icon': Icons.movie, 'title': 'ترفيه', 'route': '/entertainment'},
+    {'icon': Icons.sports_esports, 'title': 'ألعاب', 'route': '/games'},
+    {'icon': Icons.apps, 'title': 'تطبيقات', 'route': '/apps'},
+    {'icon': Icons.card_giftcard, 'title': 'بطاقات', 'route': '/gift_cards'},
+    {'icon': Icons.shopping_cart, 'title': 'أمازون', 'route': '/amazon_gift_cards'},
+    {'icon': Icons.account_balance, 'title': 'بنوك', 'route': '/banks_wallets'},
+    {'icon': Icons.send, 'title': 'تحويلات', 'route': '/money_transfers'},
+    {'icon': Icons.gavel, 'title': 'حكومية', 'route': '/government_payments'},
+    {'icon': Icons.school, 'title': 'جيب', 'route': '/jib'},
+    {'icon': Icons.money, 'title': 'سحب نقدي', 'route': '/cash_withdrawal'},
+    {'icon': Icons.cast_for_education, 'title': 'جامعات', 'route': '/universities'},
+    {'icon': Icons.phone_android, 'title': 'شحن', 'route': '/recharge_payment'},
+    {'icon': Icons.sim_card, 'title': 'رصيد', 'route': '/recharge_credit'},
+    {'icon': Icons.wifi_tethering, 'title': 'باقات', 'route': '/pay_bundles'},
+    {'icon': Icons.wifi, 'title': 'إنترنت', 'route': '/internet_landline'},
+    {'icon': Icons.redeem, 'title': 'استلام', 'route': '/receive_transfer'},
   ];
 
   @override
@@ -53,35 +37,23 @@ class _WalletScreenState extends State<WalletScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
-      appBar: const CustomAppBar(title: 'المحفظة'),
+      appBar: const SimpleAppBar(title: 'المحفظة'),
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
-            // بطاقات الرصيد
-            _buildBalanceCards(),
+            // Balance Card
+            _buildBalanceCard(context),
+
             const SizedBox(height: 24),
-            // مؤشرات البطاقات
-            _buildCardIndicators(),
-            const SizedBox(height: 32),
-            // عنوان الخدمات
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'الخدمات',
-                style: TextStyle(
-                  fontFamily: 'Changa',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.getTextColor(context),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // شبكة الخدمات
-            _buildServicesGrid(),
+
+            // Quick Actions
+            _buildQuickActions(context),
+
+            const SizedBox(height: 24),
+
+            // Services Grid
+            _buildServicesGrid(context),
+
             const SizedBox(height: 24),
           ],
         ),
@@ -89,231 +61,231 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
-  Widget _buildBalanceCards() {
-    return SizedBox(
-      height: 200,
-      child: PageView.builder(
-        itemCount: _balances.length,
-        onPageChanged: (index) {
-          setState(() {
-            _currentCardIndex = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          final balance = _balances[index];
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              gradient: AppTheme.goldGradient,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.goldColor.withOpacity(0.4),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+  Widget _buildBalanceCard(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.goldColor, AppTheme.goldLight],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.goldColor.withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'الرصيد المتاح',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
                 ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                // نمط خلفية
-                Positioned(
-                  right: -50,
-                  top: -50,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      shape: BoxShape.circle,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.verified, color: Colors.black, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      'موثق',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                Positioned(
-                  left: -30,
-                  bottom: -30,
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                // المحتوى
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            balance['name'],
-                            style: const TextStyle(
-                              fontFamily: 'Changa',
-                              fontSize: 16,
-                              color: AppTheme.darkText,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              balance['currency'],
-                              style: const TextStyle(
-                                fontFamily: 'Changa',
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.darkText,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Text(
-                        'الرصيد الحالي',
-                        style: TextStyle(
-                          fontFamily: 'Changa',
-                          fontSize: 14,
-                          color: AppTheme.darkText.withOpacity(0.7),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${balance['amount'].toStringAsFixed(0)} ${balance['symbol']}',
-                        style: const TextStyle(
-                          fontFamily: 'Changa',
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.darkText,
-                        ),
-                      ),
-                      const Spacer(),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.account_balance_wallet,
-                            color: AppTheme.darkText,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Flex Yemen Wallet',
-                            style: TextStyle(
-                              fontFamily: 'Changa',
-                              fontSize: 12,
-                              color: AppTheme.darkText.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            '250,000',
+            style: TextStyle(
+              fontFamily: 'Changa',
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
-          ).animate().fadeIn().scale(delay: const Duration(milliseconds: 200));
-        },
+          ),
+          const Text(
+            'ر.ي',
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: _buildActionButton(
+                  'إيداع',
+                  Icons.add,
+                  () => Navigator.pushNamed(context, '/deposit'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildActionButton(
+                  'سحب',
+                  Icons.remove,
+                  () => Navigator.pushNamed(context, '/withdraw'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildActionButton(
+                  'تحويل',
+                  Icons.swap_horiz,
+                  () => Navigator.pushNamed(context, '/transfer'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms);
+  }
+
+  Widget _buildActionButton(String label, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.black),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCardIndicators() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: _balances.asMap().entries.map((entry) {
-        return Container(
-          width: _currentCardIndex == entry.key ? 24 : 8,
-          height: 8,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: _currentCardIndex == entry.key
-                ? AppTheme.goldColor
-                : Colors.grey.withOpacity(0.3),
-          ),
-        );
-      }).toList(),
-    );
-  }
+  Widget _buildQuickActions(BuildContext context) {
+    final quickActions = [
+      {'icon': Icons.qr_code, 'label': 'مسح QR', 'onTap': () {}},
+      {'icon': Icons.send, 'label': 'إرسال', 'onTap': () => Navigator.pushNamed(context, '/transfer')},
+      {'icon': Icons.request_page, 'label': 'طلب', 'onTap': () {}},
+      {'icon': Icons.more_horiz, 'label': 'المزيد', 'onTap': () {}},
+    ];
 
-  Widget _buildServicesGrid() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 0.85,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
-        itemCount: _services.length,
-        itemBuilder: (context, index) {
-          final service = _services[index];
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: quickActions.map((action) {
           return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, service['route']);
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppTheme.getCardColor(context),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+            onTap: action['onTap'] as VoidCallback,
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.getCardColor(context),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: AppTheme.goldColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      service['icon'],
-                      color: AppTheme.goldColor,
-                      size: 24,
-                    ),
+                  child: Icon(
+                    action['icon'] as IconData,
+                    color: AppTheme.goldColor,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    service['name'],
-                    style: TextStyle(
-                      fontFamily: 'Changa',
-                      fontSize: 12,
-                      color: AppTheme.getTextColor(context),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                Text(action['label'] as String),
+              ],
             ),
-          ).animate().fadeIn(
-            delay: Duration(milliseconds: index * 30),
-          ).scale(
-            delay: Duration(milliseconds: index * 30),
           );
-        },
+        }).toList(),
       ),
-    );
+    ).animate().fadeIn(delay: 200.ms);
+  }
+
+  Widget _buildServicesGrid(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'الخدمات',
+            style: TextStyle(
+              fontFamily: 'Changa',
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 0.8,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: _walletServices.length,
+            itemBuilder: (context, index) {
+              final service = _walletServices[index];
+              return GestureDetector(
+                onTap: () => Navigator.pushNamed(context, service['route'] as String),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.getCardColor(context),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        service['icon'] as IconData,
+                        color: AppTheme.goldColor,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      service['title'] as String,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 300.ms);
   }
 }

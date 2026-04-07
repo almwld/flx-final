@@ -1,5 +1,6 @@
 import 'package:flex_yemen/models/rating_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flex_yemen/widgets/loading_logo.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
@@ -25,6 +26,7 @@ class _AmazonScreenState extends State<AmazonScreen> {
   ];
 
   bool _isLoading = false;
+    Navigator.pop(context);
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +115,7 @@ class _AmazonScreenState extends State<AmazonScreen> {
                       backgroundColor: AppTheme.goldColor,
                       foregroundColor: Colors.black,
                     ),
-                    child: _isLoading ? const CircularProgressIndicator() : const Text('شراء'),
+                    child: _isLoading ? SizedBox(width: 40, height: 40, child: LoadingLogo(text: '')) : const Text('شراء'),
                   ),
                 ],
               ),
