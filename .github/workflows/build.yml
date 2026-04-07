@@ -13,16 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Flutter
+      - name: Setup Flutter (stable version)
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.22.5'
           channel: 'stable'
           cache: true
-      
-      - name: Enable AndroidX
-        run: |
-          echo "android.useAndroidX=true" >> android/gradle.properties
-          echo "android.enableJetifier=true" >> android/gradle.properties
       
       - name: Clean project
         run: |
